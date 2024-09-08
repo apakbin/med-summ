@@ -29,7 +29,7 @@ def get_model_version(config):
     is_matched    = matcher.search(model_version)
     assert is_matched, f"""ERROR: Error parsing the model name and version from {config.pipeline_kwargs['model']}.
     Please make sure it has a structure similar to 'meta-llama/Meta-Llama-3.1-8B-Instruct'
-    where MODEL-VERSION occurs after the last '/' character."""
+    where MODEL-VERSION(INT/FLOAT) occurs after the last '/' character."""
     return '_'.join([substr for substr in is_matched.group().split('-') if substr])
 
 

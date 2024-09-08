@@ -18,8 +18,7 @@ def main():
     print (prompts)
     pipeline = infer.load_pipeline(config)
     
-    print (pipeline(prompts, **config.generate_kwargs))
+    print (infer.infer(config, pipeline, prompts))
 
 if __name__=="__main__":
     main()
-    #https://github.com/meta-llama/llama-recipes/blob/main/src/llama_recipes/inference/model_utils.py
