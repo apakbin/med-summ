@@ -1,4 +1,5 @@
 import re
+from types import SimpleNamespace
 
 llm_to_prompt_format = {
     #https://llama.meta.com/docs/model-cards-and-prompt-formats/llama3_1/
@@ -10,7 +11,13 @@ llm_to_prompt_format = {
         "header_end":   "<|end_header_id|>",
         #"mss_end":     "<|eom_id|>",
         "turn_end":     "<|eot_id|>",
-        "py_tag":       "<|python_tag|>"
+        "py_tag":       "<|python_tag|>",
+
+        ## role definitions
+        "sys":          "system",
+        "usr":          "user",
+        "ipy":          "ipython",
+        "llm":          "assistant"
     }
 }
 
@@ -33,10 +40,30 @@ def assert_model_version(model_version, supported = ["Llama_3.1"]):
     assert model_version in supported, f"ERROR: Seems like a model other than the supported ones in {supported} is used!"
 
 
-def format_prompt(config, sys_msg='', usr_msg=''):
-    """ Formats a prompt for a language model, given a message from the system and a message from the user.
-    It is not meant for chat, only a one-time text-generation.
+def format_prompt(model_version, prompt):
+    """Expects a model_version, and a prompt which is a dictionary of the form:
+    {'sys_msg':, 'usr_msg':}
+    """
+    format = SimpleNamespace(**llm_to_prompt_format[model_version])
+
+    def _encapsulate(role, msg = ''):
+        """ Returns a string by combining role and message with proper headers
+        """
+        if msg is None:
+            return ''
+        return format.header_start + getattr(format, role) + format.header_end + msg
+    
+    return (
+       format.start   # start of prompt
+     + _encapsulate('sys', prompt.get('sys_msg', None)) # system message
+     + _encapsulate('usr', prompt.get('usr_msg', None)) # user message
+     + _encapsulate('llm', '') # add llm header
+    )
+
+
+def format_prompts(config, prompts):
+    """ Formats a list of prompts for a language model.
     """
     model_version = get_model_version(config)
     assert_model_version(model_version)
-
+    return [format_prompt(model_version, prompt) for prompt in prompts]
