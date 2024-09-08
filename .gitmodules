@@ -1,0 +1,3 @@
+[submodule "llama-recipes"]
+	path = llama-recipes
+	url = https://github.com/meta-llama/llama-recipes.git
