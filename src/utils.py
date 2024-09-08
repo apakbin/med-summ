@@ -3,7 +3,6 @@ import json
 from huggingface_hub import login as _hf_login
 from types import SimpleNamespace
 
-
 def hf_login():
     _hf_login(token = os.environ['hf_token'])
 
