@@ -42,12 +42,19 @@ def assert_model_version(model_version, supported = ["Llama_3.1"]):
 
 def format_prompt(model_version, prompt):
     """Expects a model_version, and a prompt which is a dictionary of the form:
-    {'sys_msg':, 'usr_msg':}
+    {'sys_msg':, 'usr_msg':}. 
+    The output will look like: (extra formatting omitted)
+        > SYS MESSAGE
+        > USER MESSAGE
+    
+    If (any of) keys is not present, the corresponding part is omitted from the output.
     """
     format = SimpleNamespace(**llm_to_prompt_format[model_version])
 
     def _encapsulate(role, msg = ''):
-        """ Returns a string by combining role and message with proper headers
+        """ Returns a string by combining role and message with proper headers.
+        Output of the form: 
+            > HEADER START + ROLE + HEADER START + MESSAGE
         """
         if msg is None:
             return ''
