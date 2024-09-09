@@ -1,0 +1,3 @@
+[submodule "src/multimodal-clinic-v2"]
+	path = src/multimodal-clinic-v2
+	url = https://github.com/kingrc15/multimodal-clinic-v2.git
