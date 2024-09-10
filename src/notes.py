@@ -12,6 +12,15 @@ MIMICIIIBenchmarkDataset = getattr(module, "MIMICIIIBenchmarkDataset")
 from torchvision import transforms
 from types import SimpleNamespace
 
+from transformers import AutoTokenizer
+
+args = SimpleNamespace(
+    mimic_root              = "/ssd-data/datasets/MIMIC-III/1.4/",
+    mimic_benchmark_root    = "/ssd-data/datasets/mimic3-benchmarks/",
+    measurement_max_seq_len = 256,
+    notes_max_seq_len       = 256
+)
+
 @cache
 def get_datasets(split):
     # You can you any of these by uncommenting the notes you want
@@ -33,13 +42,6 @@ def get_datasets(split):
         "Discharge summary",
     ]    
 
-    args = SimpleNamespace(
-        mimic_root              = "/ssd-data/datasets/MIMIC-III/1.4/",
-        mimic_benchmark_root    = "/ssd-data/datasets/mimic3-benchmarks/",
-        measurement_max_seq_len = 256,
-        notes_max_seq_len       = 256
-    )
-
     transform = transforms.Compose([UseLastTransform(args.measurement_max_seq_len)])
 
     measurement_dataset = MIMICIIIBenchmarkDataset(
@@ -59,3 +61,18 @@ def get_datasets(split):
         measurement_dataset=measurement_dataset,
     )
     return measurement_dataset, note_dataset
+
+
+def tokenize(texts):
+    tokenizer = AutoTokenizer.from_pretrained("emilyalsentzer/Bio_ClinicalBERT")
+    #tokenizer.truncation_side = truncation_side
+    return tokenizer(
+        texts,#notes_dict["note_texts"],
+        padding=False, truncation=False, return_tensors=None,
+        #clean_up_tokenization_spaces = True, # was set by default, setting so it would
+        # not yell about it.
+        #return_tensors="pt",
+        #truncation=False,
+        #padding=True,
+        #max_length=args.notes_max_seq_len,
+    )
