@@ -31,7 +31,7 @@ def main():
     """ # PLOT TOKENIZED LENGTHS
     texts  = note_dataset.data["TEXT"].tolist()
     tokens = notes.tokenize(texts)["input_ids"]
-    plot_n_token_hist(tokens, "./tmp/token_len_hist.jpg", xmax = 6000, bert_clen = 256)
+    plot_n_token_hist(tokens, "./rslts/token_len_hist.jpg", xmax = 6000, bert_clen = 256)
     exit()
     """
     config  = utils.get_config()
@@ -40,14 +40,18 @@ def main():
     prompts = prompt.format_prompts(
         config, 
         [
-            {"sys": "You are a medical professional with expertise in summarizing ICU clinical notes accurately and concisely. Your task is to summarize the notes, including only the most critical information. If any part of the text is unclear or irrelevant, omit it from the summary. Limit your summary to a maximum of 230 tokens. Provide only the summary in your response and avoid adding any extra information.",
-             "usr": texts[0]},
-        ])
+            {"sys": "You are a medical professional with expertise in summarizing ICU clinical notes accurately and concisely. Your task is to summarize the notes, including only the most critical information. If any part of the text is unclear or irrelevant, omit it from the summary. Limit your summary to a maximum of 230 tokens. Provide only the summary, without including phrases such as 'Here is a summary.'",
+             "usr": texts[i]}
+        for i in range(len(texts))])
     
-    print (prompts)
+    import time
+    start = time.time()
+    #print (prompts)
     pipeline = infer.load_pipeline(config)
-    
-    print (infer.infer(config, pipeline, prompts))
+    infers   = infer.infer(config, pipeline, prompts)
+    utils.dump_pickle(infers, './rslts/infers.pkl')
+    print (f"it took {time.time() - start} seconds to infer for {len(texts)} prompts.")
+    #print (infer.infer(config, pipeline, prompts))
 
 if __name__=="__main__":
     main()
