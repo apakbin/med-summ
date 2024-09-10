@@ -36,12 +36,12 @@ def main():
     """
     config  = utils.get_config()
     utils.set_visible_cuda_devices(config)
+    texts  = note_dataset.data["TEXT"].tolist()
     prompts = prompt.format_prompts(
         config, 
         [
-            {"usr": "Who is a good boy?"},
-            {"sys": "Cutting Knowledge Date: December 2023;Today Date: 23 July 2024;You are a helpful assistant",
-             "usr": "What is the capital of France? Give one word only, no sentences."},
+            {"sys": "You are a medical professional with expertise in summarizing ICU clinical notes accurately and concisely. Your task is to summarize the notes, including only the most critical information. If any part of the text is unclear or irrelevant, omit it from the summary. Limit your summary to a maximum of 230 tokens. Provide only the summary in your response and avoid adding any extra information.",
+             "usr": texts[0]},
         ])
     
     print (prompts)
