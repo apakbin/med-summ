@@ -25,6 +25,16 @@ def create_dir_if_not_exist(path):
         os.makedirs(path)
 
 
+def dump_pickle(obj, file_path):
+    with open(file_path, 'wb') as handle:
+        pickle.dump(obj, handle)
+
+
+def load_pickle(file_path):
+    with open(file_path, 'rb') as handle:
+        return pickle.load(handle)
+
+
 def cache(func):
     @functools.wraps(func)
 
@@ -35,15 +45,13 @@ def cache(func):
         file_path = os.path.join(CACHE_ADDRESS, file_name_)
 
         if Path(file_path).is_file():
-            with open( file_path, "rb" ) as file_handle:
-                return pickle.load(file_handle)
+            return load_pickle(file_path)
 
         else:
             create_dir_if_not_exist(os.path.dirname(file_path))
             output = func(*args, **kwargs)
 
-            with open( file_path, "wb" ) as file_handle:
-                pickle.dump(output, file_handle)
+            dump_pickle(output, file_path)
 
             return output
 
