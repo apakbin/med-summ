@@ -1,14 +1,64 @@
 import os
 import json
-from huggingface_hub import login as _hf_login
+import pickle
+import functools
+from pathlib import Path
 from types import SimpleNamespace
+from huggingface_hub import login as _hf_login
+
 
 def hf_login():
     _hf_login(token = os.environ['hf_token'])
 
+
 def set_visible_cuda_devices(config):
     os.environ["CUDA_VISIBLE_DEVICES"] = str(config.gpus)
+
 
 def get_config():
     with open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'config.json')) as f:
         return SimpleNamespace(**json.load(f))
+
+
+def create_dir_if_not_exist(path):
+    if not os.path.exists(path):
+        os.makedirs(path)
+
+
+def cache(func):
+    @functools.wraps(func)
+
+    def _cache(file_name, func, *args, **kwargs):
+
+        CACHE_ADDRESS = os.path.join(os.getcwd(), 'cache/')
+        file_name_ = file_name+'.pkl'
+        file_path = os.path.join(CACHE_ADDRESS, file_name_)
+
+        if Path(file_path).is_file():
+            with open( file_path, "rb" ) as file_handle:
+                return pickle.load(file_handle)
+
+        else:
+            create_dir_if_not_exist(os.path.dirname(file_path))
+            output = func(*args, **kwargs)
+
+            with open( file_path, "wb" ) as file_handle:
+                pickle.dump(output, file_handle)
+
+            return output
+
+    def _func_args_to_str(func, *args, **kwargs):
+        output = func.__name__
+        for arg in args:
+            output += "__"+str(arg)
+
+        for key, val in kwargs.items():
+            output += "__"+str(key)+"_"+str(val)
+
+        return output
+
+    def cache(*args, **kwargs):
+        file_name = _func_args_to_str(func, *args, **kwargs)
+        return _cache(file_name, func, *args, **kwargs)
+
+    return cache
