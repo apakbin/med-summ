@@ -1,16 +1,24 @@
 {
     "model_kwargs":{
-        "pretrained_model_name_or_path": "meta-llama/Meta-Llama-3.1-8B-Instruct"
+        "model":                  "meta-llama/Meta-Llama-3.1-8B-Instruct",
+        "dtype":                  "bfloat16",
+        "gpu_memory_utilization": 0.95,
+
+        "swap_space":             4,
+        "cpu_offload_gb":         0, 
+        "enforce_eager":          false, 
+        "max_seq_len_to_capture": 3000,
+        "max_model_len":          3000
     },
     "generate_kwargs": {
-        "do_sample":        true,
-        "temperature":      0.1,
-        "max_new_tokens":   1000,
-        "top_p":            0.5
+        "n":                      1,
+        "best_of":                1,
+        "presence_penalty":       0,
+        "frequency_penalty":      0,
+        "repetition_penalty":     1,
+        "temperature":            0.1,
+        "top_p":                  0.5,
+        "max_tokens":             1500
     },
-    "tokenizer_kwargs":{
-        "return_full_text":    false,
-        "skip_special_tokens": true
-    },
-    "gpus":     "0,1,2,3,4,5,6,7"
+    "gpus":     "0,1,2,3"
 }

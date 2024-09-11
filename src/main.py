@@ -1,5 +1,6 @@
 import utils
 import infer
+import generate
 import prompt
 import notes
 
@@ -28,6 +29,21 @@ def plot_n_token_hist(tokens, figaddr, **kwargs):
 
 def main():
     """
+    infers = utils.load_pickle('./rslts/infers.pkl')
+    for output in infers:
+        prompt = output.prompt
+        generated_text = output.outputs[0].text
+
+        print ("~~~ ~~~ ~~~ " * 5)
+        print (" __PROMPT__ ")
+        print (prompt)
+        print (" __GENERATED__ ")
+        print (generated_text)
+        #print(f"Prompt: {prompt!r}, Generated text: {generated_text!r}")#print (infers)
+    exit()
+    """
+    
+    """
     measurement_dataset, note_dataset = notes.get_datasets('train')
     """
     """ # PLOT TOKENIZED LENGTHS
@@ -41,7 +57,9 @@ def main():
     """
     texts  = note_dataset.data["TEXT"].tolist()
     """
-    texts  = utils.load_pickle('tmp/__text__.pkl')[:5]
+    texts  = utils.load_pickle('tmp/__text__.pkl')#[:5]
+    #print (generate.generate(config, texts)[:5])
+    #exit()
 
     prompts = prompt.format_prompts(
         config, 
@@ -50,18 +68,18 @@ def main():
              "usr": texts[i]}
         for i in range(len(texts))])
     
-    model, tokenizer = infer.load_model_tokenizer(config)
+    #model, tokenizer = infer.load_model_tokenizer(config)
     import time
     start = time.time()
-    infers = infer.generate(config, model, tokenizer, prompts)
-
-
-    utils.dump_pickle(infers, './rslts/infers.pkl')
+    #infers = infer.generate(config, model, tokenizer, prompts)
+    gens = generate.generate(config, prompts)
     duration = time.time() - start
+
+    utils.dump_pickle(gens, './rslts/infers.pkl')
+
     print (f"""it took {duration} seconds to infer for {len(texts)} prompts.
            {round(duration/len(texts), 2)} seconds on average.
            """)
-    #print (infer.infer(config, pipeline, prompts))
 
 if __name__=="__main__":
     main()

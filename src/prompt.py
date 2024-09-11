@@ -24,7 +24,7 @@ llm_to_prompt_format = {
 
 def get_model_version(config):
     """ Given a config file, returns model and version of the language model."""
-    model_version = config.model_kwargs['pretrained_model_name_or_path'].split('/')[-1]
+    model_version = config.model_kwargs['model'].split('/')[-1]
     matcher       = re.compile(f"-.*-[+-]?([0-9]*[.])?[0-9]+-")
     is_matched    = matcher.search(model_version)
     assert is_matched, f"""ERROR: Error parsing the model name and version from {config.pipeline_kwargs['model']}.
