@@ -27,7 +27,9 @@ def plot_n_token_hist(tokens, figaddr, **kwargs):
 #TODO: do we need to develop code to clean up the output? For example llama3.1 generates '\n\nParis'
 
 def main():
+    """
     measurement_dataset, note_dataset = notes.get_datasets('train')
+    """
     """ # PLOT TOKENIZED LENGTHS
     texts  = note_dataset.data["TEXT"].tolist()
     tokens = notes.tokenize(texts)["input_ids"]
@@ -36,7 +38,11 @@ def main():
     """
     config  = utils.get_config()
     utils.set_visible_cuda_devices(config)
+    """
     texts  = note_dataset.data["TEXT"].tolist()
+    """
+    texts  = utils.load_pickle('tmp/__text__.pkl')[:5]
+
     prompts = prompt.format_prompts(
         config, 
         [
@@ -44,13 +50,17 @@ def main():
              "usr": texts[i]}
         for i in range(len(texts))])
     
+    model, tokenizer = infer.load_model_tokenizer(config)
     import time
     start = time.time()
-    #print (prompts)
-    pipeline = infer.load_pipeline(config)
-    infers   = infer.infer(config, pipeline, prompts)
+    infers = infer.generate(config, model, tokenizer, prompts)
+
+
     utils.dump_pickle(infers, './rslts/infers.pkl')
-    print (f"it took {time.time() - start} seconds to infer for {len(texts)} prompts.")
+    duration = time.time() - start
+    print (f"""it took {duration} seconds to infer for {len(texts)} prompts.
+           {round(duration/len(texts), 2)} seconds on average.
+           """)
     #print (infer.infer(config, pipeline, prompts))
 
 if __name__=="__main__":
