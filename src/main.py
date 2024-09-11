@@ -1,5 +1,4 @@
 import utils
-import infer
 import generate
 import prompt
 import notes
