@@ -4,6 +4,7 @@ import pickle
 import functools
 from pathlib import Path
 from types import SimpleNamespace
+from transformers import AutoTokenizer
 from huggingface_hub import login as _hf_login
 
 
@@ -34,6 +35,10 @@ def load_pickle(file_path):
     with open(file_path, 'rb') as handle:
         return pickle.load(handle)
 
+
+def read_file(file_path):
+    with open(file_path, 'r') as content_file:
+        return content_file.read()
 
 #https://stackoverflow.com/questions/312443/how-do-i-split-a-list-into-equally-sized-chunks
 def chunks(lst, n):
@@ -77,3 +82,15 @@ def cache(func):
         return _cache(file_name, func, *args, **kwargs)
 
     return cache
+
+
+def get_tokenizer(model):
+    return AutoTokenizer.from_pretrained(model)
+
+
+def tokenize(tokenizer, prompts):
+    return tokenizer(prompts, padding=False, truncation=False, return_tensors=None)
+
+
+def detokenize(tokenizer, prompts):
+    return tokenizer.decode(prompts)
