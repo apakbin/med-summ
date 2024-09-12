@@ -1,8 +1,9 @@
 {
+    "tmp_file":                   "tmp/",
     "model_kwargs":{
         "model":                  "meta-llama/Meta-Llama-3.1-8B-Instruct",
         "dtype":                  "bfloat16",
-        "gpu_memory_utilization": 0.95,
+        "gpu_memory_utilization": 0.85,
 
         "swap_space":             4,
         "cpu_offload_gb":         0, 
@@ -18,7 +19,9 @@
         "repetition_penalty":     1,
         "temperature":            0.1,
         "top_p":                  0.5,
-        "max_tokens":             1500
+        "max_tokens":             1500,
+        "min_tokens":             20
     },
-    "gpus":     "0,1,2,3"
+    "gen_batch_size":             5000,
+    "gpus":                       "0,1"
 }
