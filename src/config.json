@@ -1,5 +1,6 @@
 {
     "tmp_file":                   "tmp/",
+    "sys_msg_file":               "data/sys_msg.txt",
     "model_kwargs":{
         "model":                  "meta-llama/Meta-Llama-3.1-8B-Instruct",
         "dtype":                  "bfloat16",
@@ -8,18 +9,17 @@
         "swap_space":             4,
         "cpu_offload_gb":         0, 
         "enforce_eager":          false, 
-        "max_seq_len_to_capture": 3000,
-        "max_model_len":          3000
+        "max_seq_len_to_capture": 3000
     },
     "generate_kwargs": {
         "n":                      1,
         "best_of":                1,
         "presence_penalty":       0,
-        "frequency_penalty":      0,
+        "frequency_penalty":      1,
         "repetition_penalty":     1,
         "temperature":            0.1,
         "top_p":                  0.5,
-        "max_tokens":             1500,
+        "max_tokens":             240,
         "min_tokens":             20
     },
     "gen_batch_size":             5000,
